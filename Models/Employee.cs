@@ -8,15 +8,23 @@ namespace WebProject.Models
         public int Id { get; set; }
 
         [Required]
-        public required string Name { get; set; }
+        public string? Name { get; set; }
 
         [Required]
-        public required string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
         [Required]
         public int Age { get; set; }
 
         [Required]
-        public required byte[] ProfilePicture { get; set; }
+        public byte[]? ProfilePicture { get; set; }
+
+        public Employee(string Name, string PhoneNumber,  int Age, byte[] ProfilePicture)
+        {
+            this.Name = Name;
+            this.PhoneNumber = PhoneNumber;
+            this.Age = Age;
+            this.ProfilePicture = ProfilePicture;
+        }
     }
 }
