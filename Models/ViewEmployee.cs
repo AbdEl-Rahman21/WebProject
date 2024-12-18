@@ -20,10 +20,34 @@ namespace WebProject.Models
         [Required]
         public int Age { get; set; }
 
-        [Required]
+        //[Required]
         [DataType(DataType.Upload)]
         [Display(Name = "Profile Picture")]
         public IFormFile? ProfilePicture { get; set; }
+
+        public ViewEmployee()
+        {
+            
+        }
+        public ViewEmployee(Employee employee)
+        {
+            Id = employee.Id;
+            Name = employee.Name;
+            PhoneNumber = employee.PhoneNumber;
+            Age = employee.Age;
+
+            using var memoryStream = new MemoryStream(employee.ProfilePicture);
+
+            ProfilePicture = new FormFile(memoryStream, 0, memoryStream.Length, "Profile Picture", "Profile Picture")
+            {
+                Headers = new HeaderDictionary()
+            };
+
+            //System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
+            //{
+            //    FileName = ProfilePicture.FileName
+            //};
+        }
 
         public Employee MapToEmployee()
         {
