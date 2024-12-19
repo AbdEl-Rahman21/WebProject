@@ -45,20 +45,6 @@ namespace WebProject.Controllers
             return View(new ViewEmployee(employee));
         }
 
-        // POST: Employees/Details
-        [HttpPost]
-        public async Task<IActionResult> Details(int id)
-        {
-            var employee = await context.Employees.FindAsync(id);
-
-            if (employee != null)
-            {
-                return View(new ViewEmployee(employee));
-            }
-
-            return RedirectToAction(nameof(Index));
-        }
-
         // GET: Employees/Create
         public IActionResult Create()
         {
