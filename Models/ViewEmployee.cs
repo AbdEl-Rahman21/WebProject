@@ -41,7 +41,7 @@ namespace WebProject.Models
             };
         }
 
-        public Employee MapToEmployee()
+        public async Task<Employee> MapToEmployeeAsync()
         {
             if (ProfilePicture == null)
             {
@@ -51,13 +51,13 @@ namespace WebProject.Models
             {
                 using MemoryStream memoryStream = new();
 
-                ProfilePicture.CopyTo(memoryStream);
+                await ProfilePicture.CopyToAsync(memoryStream);
 
                 return new Employee(Id, Name, PhoneNumber, Age, memoryStream.ToArray());
             }
         }
 
-        public string GetProfilePicture()
+        public async Task<string> GetProfilePictureAsync()
         {
             if (ProfilePicture == null)
             {
@@ -67,7 +67,7 @@ namespace WebProject.Models
             {
                 using MemoryStream memoryStream = new();
 
-                ProfilePicture.CopyTo(memoryStream);
+                await ProfilePicture.CopyToAsync(memoryStream);
 
                 return string.Format("data:image;base64," + Convert.ToBase64String(memoryStream.ToArray()));
             }

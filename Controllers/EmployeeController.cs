@@ -14,9 +14,9 @@ namespace WebProject.Controllers
         }
 
         // GET: Employees
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            List<Employee> employeeList = [.. context.Employees];
+            List<Employee> employeeList = await context.Employees.ToListAsync();
             List<ViewEmployee> viewEmployeeList = [];
 
             foreach (Employee employee in employeeList)
@@ -28,14 +28,14 @@ namespace WebProject.Controllers
         }
 
         // GET: Employees/Details
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var employee = context.Employees.Find(id);
+            var employee = await context.Employees.FindAsync(id);
 
             if (employee == null)
             {
@@ -47,9 +47,9 @@ namespace WebProject.Controllers
 
         // POST: Employees/Details
         [HttpPost]
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var employee = context.Employees.Find(id);
+            var employee = await context.Employees.FindAsync(id);
 
             if (employee != null)
             {
@@ -67,12 +67,13 @@ namespace WebProject.Controllers
 
         // POST: Employees/Create
         [HttpPost]
-        public IActionResult Create(ViewEmployee viewEmployee)
+        public async Task<IActionResult> Create(ViewEmployee viewEmployee)
         {
             if (ModelState.IsValid)
             {
-                context.Employees.Add(viewEmployee.MapToEmployee());
-                context.SaveChanges();
+                await context.Employees.AddAsync(await viewEmployee.MapToEmployeeAsync());
+
+                await context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
             }
@@ -81,14 +82,14 @@ namespace WebProject.Controllers
         }
 
         // GET: Employees/Edit
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var employee = context.Employees.Find(id);
+            var employee = await context.Employees.FindAsync(id);
 
             if (employee == null)
             {
@@ -100,7 +101,7 @@ namespace WebProject.Controllers
 
         // POST: Employees/Edit
         [HttpPost]
-        public IActionResult Edit(int id, ViewEmployee viewEmployee)
+        public async Task<IActionResult> Edit(int id, ViewEmployee viewEmployee)
         {
             if (id != viewEmployee.Id)
             {
@@ -111,20 +112,20 @@ namespace WebProject.Controllers
             {
                 if (viewEmployee.ProfilePicture != null)
                 {
-                    context.Employees.Update(viewEmployee.MapToEmployee());
+                    context.Employees.Update(await viewEmployee.MapToEmployeeAsync());
                 }
                 else
                 {
-                    context.Employees
+                    await context.Employees
                         .Where(employee => employee.Id == viewEmployee.Id)
-                        .ExecuteUpdate(setters => setters
+                        .ExecuteUpdateAsync(setters => setters
                             .SetProperty(employee => employee.Name, viewEmployee.Name)
                             .SetProperty(employee => employee.PhoneNumber, viewEmployee.PhoneNumber)
                             .SetProperty(employee => employee.Age, viewEmployee.Age)
                         );
                 }
 
-                context.SaveChanges();
+                await context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
             }
@@ -133,14 +134,14 @@ namespace WebProject.Controllers
         }
 
         // GET: Employees/Delete
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var employee = context.Employees.Find(id);
+            var employee = await context.Employees.FindAsync(id);
 
             if (employee == null)
             {
@@ -152,14 +153,15 @@ namespace WebProject.Controllers
 
         // POST: Employees/Delete
         [HttpPost]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var employee = context.Employees.Find(id);
+            var employee = await context.Employees.FindAsync(id);
 
             if (employee != null)
             {
                 context.Employees.Remove(employee);
-                context.SaveChanges();
+
+                await context.SaveChangesAsync();
             }
 
             return RedirectToAction(nameof(Index));
