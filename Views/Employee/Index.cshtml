@@ -4,7 +4,16 @@
     ViewData["Title"] = "Employees";
 }
 
-<h1>Employees</h1>
+<div>
+    <h1>Employees</h1>
+    <form asp-action="Index" method="get">
+        <div class="form-group">
+        <label for="query">Search:</label>
+        <input type="text" id="query" name="query" placeholder="Type to search..." />
+        <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+</div>
 
 <p>
     <a asp-action="Create">Add Employee</a>

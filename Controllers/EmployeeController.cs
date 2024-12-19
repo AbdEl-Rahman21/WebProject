@@ -14,7 +14,7 @@ namespace WebProject.Controllers
         }
 
         // GET: Employees
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? query)
         {
             List<Employee> employeeList = await context.Employees.ToListAsync();
             List<ViewEmployee> viewEmployeeList = [];
@@ -22,6 +22,12 @@ namespace WebProject.Controllers
             foreach (Employee employee in employeeList)
             {
                 viewEmployeeList.Add(new ViewEmployee(employee));
+            }
+
+            if (query != null)
+            {
+                viewEmployeeList = viewEmployeeList
+                    .Where(employee => employee.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase)).ToList();
             }
 
             return View(viewEmployeeList);
