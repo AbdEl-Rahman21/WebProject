@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Collections;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace WebProject.Models
 {
@@ -10,25 +9,23 @@ namespace WebProject.Models
         public int Id { get; set; }
 
         [Required]
-        public string? Name { get; set; }
+        public required string Name { get; set; }
 
         [Required]
         [Display(Name = "Phone Number")]
         [DataType(DataType.PhoneNumber)]
-        public string? PhoneNumber { get; set; }
+        public required string PhoneNumber { get; set; }
 
         [Required]
         public int Age { get; set; }
 
-        //[Required]
         [DataType(DataType.Upload)]
         [Display(Name = "Profile Picture")]
         public IFormFile? ProfilePicture { get; set; }
 
-        public ViewEmployee()
-        {
-            
-        }
+        public ViewEmployee() { }
+
+        [SetsRequiredMembers]
         public ViewEmployee(Employee employee)
         {
             Id = employee.Id;
@@ -36,27 +33,44 @@ namespace WebProject.Models
             PhoneNumber = employee.PhoneNumber;
             Age = employee.Age;
 
-            using var memoryStream = new MemoryStream(employee.ProfilePicture);
+            MemoryStream memoryStream = new(employee.ProfilePicture);
 
-            ProfilePicture = new FormFile(memoryStream, 0, memoryStream.Length, "Profile Picture", "Profile Picture")
+            ProfilePicture = new FormFile(memoryStream, 0, memoryStream.Length, "Profile Picture", "ProfilePicture")
             {
                 Headers = new HeaderDictionary()
             };
-
-            //System.Net.Mime.ContentDisposition cd = new System.Net.Mime.ContentDisposition
-            //{
-            //    FileName = ProfilePicture.FileName
-            //};
         }
 
         public Employee MapToEmployee()
         {
-            using var memoryStream = new MemoryStream();
-            ProfilePicture.CopyTo(memoryStream);
+            if (ProfilePicture == null)
+            {
+                throw new InvalidOperationException("Profile Picture can not be null when creating new employees!");
+            }
+            else
+            {
+                using MemoryStream memoryStream = new();
 
-            Employee employee = new Employee(Name, PhoneNumber, Age, memoryStream.ToArray());
+                ProfilePicture.CopyTo(memoryStream);
 
-            return employee;
+                return new Employee(Id, Name, PhoneNumber, Age, memoryStream.ToArray());
+            }
+        }
+
+        public string GetProfilePicture()
+        {
+            if (ProfilePicture == null)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                using MemoryStream memoryStream = new();
+
+                ProfilePicture.CopyTo(memoryStream);
+
+                return string.Format("data:image;base64," + Convert.ToBase64String(memoryStream.ToArray()));
+            }
         }
     }
 }

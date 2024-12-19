@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Immutable;
 using WebProject.Models;
 
 namespace WebProject.Controllers
@@ -14,20 +13,59 @@ namespace WebProject.Controllers
             context = new Context();
         }
 
-        [HttpGet]
+        // GET: Employees
         public IActionResult Index()
         {
-            List<Employee> employeeList = context.Employees.ToList();
+            List<Employee> employeeList = [.. context.Employees];
+            List<ViewEmployee> viewEmployeeList = [];
 
-            return View(employeeList);
+            foreach (Employee employee in employeeList)
+            {
+                viewEmployeeList.Add(new ViewEmployee(employee));
+            }
+
+            return View(viewEmployeeList);
         }
 
-        [HttpGet]
+        // GET: Employees/Details
+        public IActionResult Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var employee = context.Employees.Find(id);
+
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            return View(new ViewEmployee(employee));
+        }
+
+        // POST: Employees/Details
+        [HttpPost]
+        public IActionResult Details(int id)
+        {
+            var employee = context.Employees.Find(id);
+
+            if (employee != null)
+            {
+                return View(new ViewEmployee(employee));
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Employees/Create
         public IActionResult Create()
         {
             return View();
         }
 
+        // POST: Employees/Create
         [HttpPost]
         public IActionResult Create(ViewEmployee viewEmployee)
         {
@@ -42,7 +80,7 @@ namespace WebProject.Controllers
             return View(viewEmployee);
         }
 
-        [HttpGet]
+        // GET: Employees/Edit
         public IActionResult Edit(int? id)
         {
             if (id == null)
@@ -60,6 +98,7 @@ namespace WebProject.Controllers
             return View(new ViewEmployee(employee));
         }
 
+        // POST: Employees/Edit
         [HttpPost]
         public IActionResult Edit(int id, ViewEmployee viewEmployee)
         {
@@ -93,6 +132,7 @@ namespace WebProject.Controllers
             return View(viewEmployee);
         }
 
+        // GET: Employees/Delete
         public IActionResult Delete(int? id)
         {
             if (id == null)
@@ -107,9 +147,10 @@ namespace WebProject.Controllers
                 return NotFound();
             }
 
-            return View(employee);
+            return View(new ViewEmployee(employee));
         }
 
+        // POST: Employees/Delete
         [HttpPost]
         public IActionResult Delete(int id)
         {

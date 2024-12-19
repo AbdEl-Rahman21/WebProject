@@ -1,30 +1,24 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace WebProject.Models
 {
-    public class Employee
+    [method: SetsRequiredMembers]
+    public class Employee(int Id, string Name, string PhoneNumber, int Age, byte[] ProfilePicture)
     {
         [Key]
-        public int Id { get; set; }
+        public int Id { get; set; } = Id;
 
         [Required]
-        public string? Name { get; set; }
+        public required string Name { get; set; } = Name;
 
         [Required]
-        public string? PhoneNumber { get; set; }
+        public required string PhoneNumber { get; set; } = PhoneNumber;
 
         [Required]
-        public int Age { get; set; }
+        public int Age { get; set; } = Age;
 
         [Required]
-        public byte[]? ProfilePicture { get; set; }
-
-        public Employee(string Name, string PhoneNumber,  int Age, byte[] ProfilePicture)
-        {
-            this.Name = Name;
-            this.PhoneNumber = PhoneNumber;
-            this.Age = Age;
-            this.ProfilePicture = ProfilePicture;
-        }
+        public required byte[] ProfilePicture { get; set; } = ProfilePicture;
     }
 }
